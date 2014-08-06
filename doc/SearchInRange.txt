@@ -1,0 +1,118 @@
+*SearchInRange.txt*     Limit search to range when jumping to the next search result.
+
+		       SEARCH IN RANGE    by Ingo Karkat
+							   *SearchInRange.vim*
+description			|SearchInRange-description|
+usage				|SearchInRange-usage|
+installation			|SearchInRange-installation|
+integration			|SearchInRange-integration|
+limitations			|SearchInRange-limitations|
+known problems			|SearchInRange-known-problems|
+todo				|SearchInRange-todo|
+history				|SearchInRange-history|
+
+==============================================================================
+DESCRIPTION				       *SearchInRange-description*
+
+Vim can limit the scope of searches to the remainder of the buffer with the
+'wrapscan' option, but it cannot limit searches to a particular range, other
+than by including special regular expression atoms like |/\%l|. It's not easy
+to restrict a search to the current function, or next 100 lines, even though
+such is often useful to avoid getting lost in the buffer.
+
+This plugin provides custom search motions, similar to the built-in |n| / |N|,
+which only move to matches of the current search pattern that fall within a
+certain range that has been specified through the |:SearchInRange| command, or
+an equivalent mapping.
+
+RELATED WORKS								     *
+
+- range-search (vimscript #1396) defines a :R command.
+- vis.vim (vimscript #1195) defines a :S command and // and ?? mappings. It
+  works by modifying the search pattern to add restrictions for lines and
+  columns.
+
+==============================================================================
+USAGE						     *SearchInRange-usage*
+							      *:SearchInRange*
+:[range]SearchInRange 	Search forward to the first occurrence of the current
+			search pattern inside [range]. Limit search to lines
+			inside [range] when jumping to the next search result.
+:[range]SearchInRange [/]{pattern}[/]
+			Search for {pattern}, starting with the first
+			occurrence inside [range]. Limit search to lines
+			inside [range] when jumping to the next search result.
+			Without [/], only literal whole words are matched.
+			|:search-args|
+								 *v_<Leader>/*
+{Visual}<Leader>/	Jump to the first occurrence of the last search
+			pattern inside selection. Limit search to lines inside
+			selection when jumping to the next search result.
+								   *<Leader>/*
+<Leader>/{motion}	Use the moved-over lines as a range to limit searches
+			to. Jump to first occurrence of the last search
+			pattern inside the range.
+
+
+The special searches all start with 'go...' (mnemonic: "go once to special
+match"); and come in search forward (ending with lowercase letter) and search
+backward (uppercase letter) variants.
+								   *gor* *goR*
+[count]gor / goR	Search forward / backward to the [count]'th occurrence
+			of the last search pattern in the previously specified
+			range.
+
+==============================================================================
+INSTALLATION				      *SearchInRange-installation*
+
+This script is packaged as a |vimball|. If you have the "gunzip" decompressor
+in your PATH, simply edit the *.vmb.gz package in Vim; otherwise, decompress
+the archive first, e.g. using WinZip. Inside Vim, install by sourcing the
+vimball or via the |:UseVimball| command. >
+    vim SearchInRange*.vmb.gz
+    :so %
+To uninstall, use the |:RmVimball| command.
+
+DEPENDENCIES				      *SearchInRange-dependencies*
+
+- Requires Vim 7.0 or higher.
+- Requires the |ingo-library.vim| plugin (vimscript #4433), version 1.020 or
+  higher.
+- SearchRepeat.vim (vimscript #4949) plugin (optional)
+
+==============================================================================
+INTEGRATION				       *SearchInRange-integration*
+
+If the SearchRepeat plugin is installed, a parallel set of "go now and for
+next searches" mappings (starting with 'gn...' instead of 'go...') is
+installed. These mappings have the same effect, but in addition re-program the
+'n/N' keys to repeat this particular search (until another gn... search is
+used).
+
+==============================================================================
+LIMITATIONS				       *SearchInRange-limitations*
+
+KNOWN PROBLEMS				    *SearchInRange-known-problems*
+
+TODO						      *SearchInRange-todo*
+
+- Optionally highlight range.
+
+IDEAS						     *SearchInRange-ideas*
+
+==============================================================================
+HISTORY						   *SearchInRange-history*
+
+1.00	06-Aug-2014
+First published version.
+
+0.01	07-Aug-2008
+Started development.
+
+==============================================================================
+Copyright: (C) 2008-2014 Ingo Karkat
+The VIM LICENSE applies to this plugin; see |copyright|.
+
+Maintainer:	Ingo Karkat <ingo@karkat.de>
+==============================================================================
+ vim:tw=78:ts=8:ft=help:norl:

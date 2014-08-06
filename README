@@ -1,0 +1,46 @@
+This is a mirror of http://www.vim.org/scripts/script.php?script_id=4997
+
+DESCRIPTION
+Vim can limit the scope of searches to the remainder of the buffer with the
+'wrapscan' option, but it cannot limit searches to a particular range, other
+than by including special regular expression atoms like /\%l. It's not easy
+to restrict a search to the current function, or next 100 lines, even though
+such is often useful to avoid getting lost in the buffer.
+
+This plugin provides custom search motions, similar to the built-in n / N,
+which only move to matches of the current search pattern that fall within a
+certain range that has been specified through the :SearchInRange command, or
+an equivalent mapping.
+
+RELATED WORKS
+- range-search (vimscript #1396) defines a :R command.
+- vis.vim (vimscript #1195) defines a :S command and // and ?? mappings. It
+  works by modifying the search pattern to add restrictions for lines and
+  columns.
+
+USAGE
+:[range]SearchInRange   Search forward to the first occurrence of the current
+                        search pattern inside [range]. Limit search to lines
+                        inside [range] when jumping to the next search result.
+:[range]SearchInRange [/]{pattern}[/]
+                        Search for {pattern}, starting with the first
+                        occurrence inside [range]. Limit search to lines
+                        inside [range] when jumping to the next search result.
+                        Without [/], only literal whole words are matched.
+                        :search-args
+
+{Visual}<Leader>/       Jump to the first occurrence of the last search
+                        pattern inside selection. Limit search to lines inside
+                        selection when jumping to the next search result.
+
+<Leader>/{motion}       Use the moved-over lines as a range to limit searches
+                        to. Jump to first occurrence of the last search
+                        pattern inside the range.
+
+The special searches all start with 'go...' (mnemonic: "go once to special
+match"); and come in search forward (ending with lowercase letter) and search
+backward (uppercase letter) variants.
+
+[count]gor / goR        Search forward / backward to the [count]'th occurrence
+                        of the last search pattern in the previously specified
+                        range.
