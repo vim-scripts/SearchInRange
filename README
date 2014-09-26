@@ -29,11 +29,11 @@ USAGE
                         Without [/], only literal whole words are matched.
                         :search-args
 
-{Visual}<Leader>/       Jump to the first occurrence of the last search
+{Visual}<Leader>n       Jump to the first occurrence of the last search
                         pattern inside selection. Limit search to lines inside
                         selection when jumping to the next search result.
 
-<Leader>/{motion}       Use the moved-over lines as a range to limit searches
+<Leader>n{motion}       Use the moved-over lines as a range to limit searches
                         to. Jump to first occurrence of the last search
                         pattern inside the range.
 

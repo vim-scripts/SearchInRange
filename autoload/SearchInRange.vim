@@ -4,6 +4,7 @@
 "   - ingo/avoidprompt.vim autoload script
 "   - ingo/err.vim autoload script
 "   - ingo/msg.vim autoload script
+"   - ingo/range.vim autoload script
 "   - SearchRepeat.vim autoload script (optional integration)
 "
 " Copyright: (C) 2008-2014 Ingo Karkat
@@ -12,6 +13,14 @@
 " Maintainer:	Ingo Karkat <ingo@karkat.de>
 "
 " REVISION	DATE		REMARKS
+"   1.01.020	26-Sep-2014	FIX: Need to explicitly account for closed folds
+"				in the range passed to
+"				SearchInRange#SetAndSearchInRange().
+"				FIX: When moving to start / end of range, must
+"				use "c" search flag to avoid skipping a match
+"				directly at the border.
+"				FIX: After moving outside the range, also need
+"				to use "c" search flag.
 "   1.00.019	29-May-2014	Use
 "				ingo#cmdargs#pattern#ParseUnescapedWithLiteralWholeWord()
 "				to also allow :[range]SearchInRange /{pattern}/
@@ -86,17 +95,21 @@ function! SearchInRange#SearchInRange( isBackward )
     let l:count = v:count1
     let l:save_view = winsaveview()
     let l:message = ['echo', ':' . b:startLine . ',' . b:endLine . '/' . ingo#avoidprompt#TranslateLineBreaks(@/)]
+    let l:searchFlags = ''
 
     while l:count > 0 && l:message[0] !=# 'error'
 	let [l:prevLine, l:prevCol] = [line('.'), col('.')]
 
 	if l:prevLine < b:startLine
 	    call s:MoveToRangeStart()
+	    let l:searchFlags = 'c'
 	elseif l:prevLine > b:endLine
 	    call s:MoveToRangeEnd()
+	    let l:searchFlags = 'c'
 	endif
 
-	let l:line = search( @/, (a:isBackward ? 'b' : '') )
+	let l:line = search(@/, (a:isBackward ? 'b' : '') . l:searchFlags)
+	let l:searchFlags = ''
 	if l:line == 0
 	    " No match, not even outside the range.
 	    let l:message = ['error', 'Pattern not found: ' . @/]
@@ -104,7 +117,7 @@ function! SearchInRange#SearchInRange( isBackward )
 	    if ! a:isBackward && (l:line < b:startLine || l:line > b:endLine)
 		" We moved outside the range, restart at start of range.
 		call s:MoveToRangeStart()
-		let l:line = search( @/, '' )
+		let l:line = search(@/, 'c')
 
 		if l:line > b:endLine
 		    " Only matches outside of range.
@@ -119,7 +132,7 @@ function! SearchInRange#SearchInRange( isBackward )
 	    elseif a:isBackward && (l:line < b:startLine || l:line > b:endLine)
 		" We moved outside the range, restart at end of range.
 		call s:MoveToRangeEnd()
-		let l:line = search( @/, 'b' )
+		let l:line = search(@/, 'bc')
 
 		if l:line < b:startLine
 		    " Only matches outside of range.
@@ -179,8 +192,8 @@ endfunction
 
 function! SearchInRange#SetAndSearchInRange( startLine, endLine, pattern )
     let l:pattern = ingo#cmdargs#pattern#ParseUnescapedWithLiteralWholeWord(a:pattern)
-    let b:startLine = a:startLine
-    let b:endLine = a:endLine
+    let b:startLine = ingo#range#NetStart(a:startLine)
+    let b:endLine = ingo#range#NetEnd(a:endLine)
     if ! empty(l:pattern)
 	let @/ = l:pattern
     endif

@@ -44,12 +44,12 @@ USAGE						     *SearchInRange-usage*
 			inside [range] when jumping to the next search result.
 			Without [/], only literal whole words are matched.
 			|:search-args|
-								 *v_<Leader>/*
-{Visual}<Leader>/	Jump to the first occurrence of the last search
+								 *v_<Leader>n*
+{Visual}<Leader>n	Jump to the first occurrence of the last search
 			pattern inside selection. Limit search to lines inside
 			selection when jumping to the next search result.
-								   *<Leader>/*
-<Leader>/{motion}	Use the moved-over lines as a range to limit searches
+								   *<Leader>n*
+<Leader>n{motion}	Use the moved-over lines as a range to limit searches
 			to. Jump to first occurrence of the last search
 			pattern inside the range.
 
@@ -76,7 +76,7 @@ To uninstall, use the |:RmVimball| command.
 DEPENDENCIES				      *SearchInRange-dependencies*
 
 - Requires Vim 7.0 or higher.
-- Requires the |ingo-library.vim| plugin (vimscript #4433), version 1.020 or
+- Requires the |ingo-library.vim| plugin (vimscript #4433), version 1.022 or
   higher.
 - SearchRepeat.vim (vimscript #4949) plugin (optional)
 
@@ -102,6 +102,15 @@ IDEAS						     *SearchInRange-ideas*
 
 ==============================================================================
 HISTORY						   *SearchInRange-history*
+
+1.01	26-Sep-2014
+- FIX: Need to explicitly account for closed folds in the range passed to
+  SearchInRange#SetAndSearchInRange().
+- FIX: When moving to start / end of range, must use "c" search flag to avoid
+  skipping a match directly at the border.
+- FIX: After moving outside the range, also need to use "c" search flag.
+- FIX: Correct default mappings in documentation.
+  *** You need to update to ingo-library (vimscript #4433) version 1.022! ***
 
 1.00	06-Aug-2014
 First published version.
